@@ -69,7 +69,7 @@ agent.set_temperature(0.7)
 agent.set_max_tokens(1500)
 
 # Change the model
-agent.set_model("gpt-4o-advanced")
+agent.set_model("gpt-4o")
 ```
 
 ### Generate a Response
