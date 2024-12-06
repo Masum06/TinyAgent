@@ -5,6 +5,25 @@ TinyAgent is a lightweight Python library for creating and managing conversation
 
 ---
 
+## Table of Contents
+
+1. [Features](#features)
+2. [Installation](#installation)
+3. [Usage](#usage)
+   - [Initialize an Agent](#initialize-an-agent)
+   - [Add Messages](#add-messages)
+   - [Add Instructions and Examples](#add-instructions-and-examples)
+   - [Configure Agent Behavior](#configure-agent-behavior)
+   - [Generate a Response](#generate-a-response)
+4. [API Reference](#api-reference)
+   - [Class: TinyAgent](#class-tinyagent)
+5. [License](#license)
+6. [Contributing](#contributing)
+7. [Contact](#contact)
+
+
+---
+
 ## Features
 
 - **Customizable Agent Configuration**: Set agent names, behaviors, and system messages.
