@@ -1,4 +1,4 @@
-import os
+import os, json
 
 ## First set OpenAI API key
 os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY"
@@ -47,11 +47,12 @@ class TinyAgent:
     self.model = model
 
   def call(self, prompt="", response_type="text"):
+    messages = self.messages 
     if prompt:
-      self.add_user_message(prompt)
+      messages.append({"role": "user", "content": prompt})
     response = client.chat.completions.create(
       model=self.model,
-      messages=self.messages,
+      messages=messages,
       temperature=self.temperature,
       max_tokens=self.max_tokens,
       top_p=1,
