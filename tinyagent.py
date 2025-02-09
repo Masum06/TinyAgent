@@ -7,17 +7,23 @@ from openai import OpenAI
 client = OpenAI()
 
 class TinyAgent:
-  def __init__(self, name="", system=""):
+  def __init__(self, model="gpt-4o-mini", name="TinyAgent", system=""):
     self.name = name
     self.system = system
     self.messages = []
     self.temperature = 1
     self.max_tokens = 2048
-    self.model = "gpt-4o-mini"
+    self.model = model
     if name:
       self.add_system_message(f"Your name is {name}.")
     if system:
       self.add_system_message(system)
+
+  def set_max_tokens(self, max_tokens):
+    self.max_tokens = max_tokens
+
+  def set_model(self, model):
+    self.model = model
 
   def add_message(self,message_type, message):
     self.messages.append({"role": message_type, "content":message})
@@ -40,11 +46,6 @@ class TinyAgent:
   def set_temperature(self, temperature):
     self.temperature = temperature
 
-  def set_max_tokens(self, max_tokens):
-    self.max_tokens = max_tokens
-
-  def set_model(self, model):
-    self.model = model
 
   def call(self, prompt="", response_type="text"):
     messages = self.messages 
