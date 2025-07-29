@@ -60,12 +60,15 @@ class TinyAgent:
   def set_model(self, model):
     self.model = model
 
-  def call(self, prompt="", response_type="text"):
+  def call(self, prompt="", response_type="text", cache=True):
+    temp_messages = self.messages.copy()
     if prompt:
-      self.add_user_message(prompt)
+      temp_messages.append({"role": "user", "content": prompt})
+    if cache:
+      self.add_message("user", prompt)
     response = client.chat.completions.create(
       model=self.model,
-      messages=self.messages,
+      messages=temp_messages,
       temperature=self.temperature,
       max_tokens=max(self.max_tokens, int(self.prompt_token_count()*2)),
       top_p=1,
@@ -76,10 +79,14 @@ class TinyAgent:
       }
     )
     reply = response.choices[0].message.content
-    self.add_message("assistant", reply)
+    if cache:
+      self.add_message("assistant", reply)
     return reply
 
   def load_json(self,s):
+    s = s.strip()
+    if s[0] != "{" or s[-1] != "}":
+      return None
     try:
         # Attempt to parse the matched JSON
         return json.loads(s)
@@ -87,9 +94,9 @@ class TinyAgent:
         # Return None if JSON parsing fails
         return None
 
-  def call_json(self, prompt=""):
-    prompt += "\n\nOutput must be JSON format.\n\n"
-    reply = self.call(prompt, response_type="json_object")
+  def call_json(self, prompt="", cache=True):
+    prompt += "\n\nOutput must be JSON format. Don't say anything else.\n\n"
+    reply = self.call(prompt, response_type="json_object", cache)
     try:
       reply = reply.replace("```json", "").replace("```", "").strip()
       reply_json = self.load_json(reply)
