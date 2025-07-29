@@ -96,14 +96,14 @@ class TinyAgent:
 
   def call_json(self, prompt="", cache=True):
     prompt += "\n\nOutput must be JSON format. Don't say anything else.\n\n"
-    reply = self.call(prompt, response_type="json_object", cache)
+    reply = self.call(prompt, response_type="json_object", cache=cache)
     try:
       reply = reply.replace("```json", "").replace("```", "").strip()
-      reply_json = self.load_json(reply)
-      if reply_json[-1] != "}":
+      if reply[-1] != "}":
         raise Exception("Incomplete JSON")
-    except:
+      reply_json = self.load_json(reply)
+    except Exception as e:
+      print(e)
       reply_json = None
-      print("Error parsing JSON")
 
     return reply_json
