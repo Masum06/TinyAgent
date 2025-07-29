@@ -91,6 +91,7 @@ class TinyAgent:
     prompt += "\n\nOutput must be JSON format.\n\n"
     reply = self.call(prompt, response_type="json_object")
     try:
+      reply = reply.replace("```json", "").replace("```", "").strip()
       reply_json = self.load_json(reply)
       if reply_json[-1] != "}":
         raise Exception("Incomplete JSON")
