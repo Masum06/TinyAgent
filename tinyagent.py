@@ -99,10 +99,3 @@ class TinyAgent:
       print("Error parsing JSON")
 
     return reply_json
-
-## Create a TinyAgent
-tiny_agent = TinyAgent("tiny_agent 🤖", "You perform math.")
-tiny_agent.add_instruction("Output in Latex format")
-
-## Call tinyAgent
-tiny_agent.call("What's your name?")
