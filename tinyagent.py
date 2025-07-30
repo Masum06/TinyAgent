@@ -61,27 +61,37 @@ class TinyAgent:
     self.model = model
 
   def call(self, prompt="", response_type="text", cache=True):
-    temp_messages = self.messages.copy()
-    if prompt:
-      temp_messages.append({"role": "user", "content": prompt})
-    if cache:
-      self.add_message("user", prompt)
-    response = client.chat.completions.create(
-      model=self.model,
-      messages=temp_messages,
-      temperature=self.temperature,
-      max_tokens=max(self.max_tokens, int(self.prompt_token_count()*2)),
-      top_p=1,
-      frequency_penalty=0,
-      presence_penalty=0,
-      response_format={
-        "type": response_type # "text" or "json_object"
+      temp_messages = self.messages.copy()
+      if prompt:
+          temp_messages.append({"role": "user", "content": prompt})
+
+      max_tokens_value = max(self.max_tokens, int(self.prompt_token_count() * 2))
+
+      kwargs = {
+          "model": self.model,
+          "messages": temp_messages,
+          "temperature": self.temperature,
+          "top_p": 1,
+          "frequency_penalty": 0,
+          "presence_penalty": 0,
+          "response_format": {
+              "type": response_type  # "text" or "json_object"
+          }
       }
-    )
-    reply = response.choices[0].message.content
-    if cache:
-      self.add_message("assistant", reply)
-    return reply
+
+      if "o3" in self.model or "o4" in self.model:
+          kwargs["max_completion_tokens"] = max_tokens_value
+      else:
+          kwargs["max_tokens"] = max_tokens_value
+
+      response = client.chat.completions.create(**kwargs)
+      reply = response.choices[0].message.content
+
+      if cache:
+          self.add_message("user", prompt)
+          self.add_message("assistant", reply)
+
+      return reply
 
   def load_json(self,s):
     s = s.strip()
