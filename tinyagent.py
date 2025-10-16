@@ -33,6 +33,9 @@ class TinyAgent:
     def add_user_message(self, message):
         self.add_message("user", message)
 
+    def add_assistant_message(self, message):
+        self.add_message("assistant", message)
+
     def set_max_tokens(self, max_tokens):
         self.max_tokens = max_tokens
 
@@ -42,14 +45,17 @@ class TinyAgent:
     def set_reasoning_effort(self, reasoning_effort):
         self.reasoning_effort = reasoning_effort
 
-    def call(self, prompt="", response_type="text"):
+    def call(self, prompt="", response_type="text", cache=True):
+        messages = self.messages.copy()
         if prompt:
+            messages.append({"role": "user", "content":prompt})
+        if cache:
             self.add_user_message(prompt)
 
         if "gpt-5" in self.model:
             response = client.responses.create(
                 model=self.model,
-                input=self.messages,
+                input=messages,
                 reasoning={"effort": self.reasoning_effort},
                 text={
                     "format": {
@@ -59,14 +65,11 @@ class TinyAgent:
                   },
             )
             reply = response.output_text
-            if self.debug:
-                print(reply)
-            return reply
 
         elif "gpt-4" in self.model:
             response = client.responses.create(
               model=self.model,
-              input=self.messages,
+              input=messages,
               temperature=self.temperature,
               max_output_tokens=self.max_tokens,
               top_p=1,
@@ -77,10 +80,11 @@ class TinyAgent:
               }
             )
             reply = response.output_text
-            self.add_message("assistant", reply)
-            if self.debug:
-                print(reply)
-            return reply
+        if self.debug:
+            print(reply)
+        if cache:
+            self.add_assistant_message(reply)
+        return reply
 
     def load_json(self,s):
         import json
@@ -89,17 +93,9 @@ class TinyAgent:
         except json.JSONDecodeError:
             return None
 
-    def call_reply(self):
-
-        reply = self.call()
-
-        return reply
-
     def call_json(self, prompt=""):
         self.add_system_message("Reply must be JSON format.")
-        if prompt:
-            self.add_user_message(prompt)
-        reply = self.call(response_type="json_object")
+        reply = self.call(prompt=prompt, response_type="json_object")
         if not reply:
             print("Empty reply")
             return None
