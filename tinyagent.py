@@ -66,7 +66,7 @@ class TinyAgent:
             )
             reply = response.output_text
 
-        elif "gpt-4" in self.model:
+        elif "gpt-4" in self.model or "o3" in self.model or "o4" in self.model:
             response = client.responses.create(
               model=self.model,
               input=messages,
