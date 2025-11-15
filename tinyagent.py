@@ -25,7 +25,11 @@ class TinyAgent:
         self.messages = list()
 
     def add_message(self,message_type, message):
-        self.messages.append({"role": message_type, "content":message})
+        content_type = "input_text"
+        if message_type == "assistant":
+          content_type = "output_text"
+        # Corrected content format
+        self.messages.append({"role": message_type, "content":[{"type": content_type, "text": message}]})
 
     def add_system_message(self, message):
         self.add_message("system", message)
@@ -35,6 +39,12 @@ class TinyAgent:
 
     def add_assistant_message(self, message):
         self.add_message("assistant", message)
+
+    def add_instruction(self, message):
+        self.add_message("system", "Instruction: " + message)
+
+    def add_data(self, message):
+        self.add_message("user", "Data: " + message)
 
     def set_max_tokens(self, max_tokens):
         self.max_tokens = max_tokens
