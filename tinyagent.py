@@ -1,8 +1,5 @@
 import os, json
 
-## First set OpenAI API key
-os.environ["OPENAI_API_KEY"] = "YOUR_API_KEY"
-
 from openai import OpenAI
 client = OpenAI()
 
