@@ -1,4 +1,7 @@
-import os, json
+import os, json, getpass
+
+if not os.environ["OPENAI_API_KEY"]:
+  os.environ["OPENAI_API_KEY"] = getpass.getpass("Enter OpenAI API key: ")
 
 from openai import OpenAI
 client = OpenAI()
